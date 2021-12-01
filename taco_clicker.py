@@ -8,7 +8,7 @@ import time
 
 wn = trtl.Screen()
 wn.addshape("taco.gif")
-wn.addshape("button.gif")
+wn.addshape("burrito.gif")
 
 score_writer = trtl.Turtle()
 score_writer.speed(0)
@@ -20,7 +20,7 @@ score_writer.pendown()
 # Upgrade Button
 button = trtl.Turtle()
 button.speed(0)
-button.shape("button.gif")
+button.shape("burrito.gif")
 button.penup()
 button.setposition(-170, 180)
 
@@ -48,6 +48,7 @@ next.write("Next upgrade: " + str(upgrade_cost) + " tacos")
 taco = trtl.Turtle()
 score = 0
 taco.shape("taco.gif")
+
 taco.speed(0)
 taco.penup() 
 
@@ -65,17 +66,9 @@ p.speed(3)
 ######################
 ### Game functions ###
 ######################
-def eg_click(x, y):
+def taco_click(x, y):
   update_score()
-  change_position()
-  point()
-
-def change_position():
-  new_xpos = rand.randint(-200, 200)
-  new_ypos = rand.randint(-150, 130)
-  taco.hideturtle()
-  taco.setposition(new_xpos, new_ypos)
-  taco.showturtle()
+  
 
 def update_score():
   score_writer.clear()
@@ -83,14 +76,9 @@ def update_score():
   score += score_rate
   print(score)
   score_writer.write(str(score) + " tacos", font = font_setup)
+  
 
-def point():
-  p.clear()
-  p.penup()
-  p.setposition(taco.xcor()+7, taco.ycor()+20)
-  p.pendown()
-  p.write("+"+str(score_rate))
-  p.penup()
+
 
 def button_click(x, y):
   upgrade() 
@@ -102,7 +90,7 @@ def upgrade():
   if score >= upgrade_cost:
     score_rate += 1
     rate.clear()
-    rate.write("tacos per click: " + str(score_rate))
+    rate.write("Tacos per click: " + str(score_rate))
     score -= upgrade_cost
     score_writer.clear()
     score_writer.write(str(score) + " tacos", font = font_setup)
@@ -112,6 +100,6 @@ def upgrade():
     next.write("Next upgrade: " + str(upgrade_cost) + " tacos")
 
 button.onclick(button_click)
-taco.onclick(eg_click)
+taco.onclick(taco_click)
 
 wn.mainloop()
