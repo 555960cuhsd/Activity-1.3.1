@@ -19,6 +19,7 @@ wn.addshape("buttonpressed.gif")
 wn.addshape("fork.gif")
 wn.addshape("background.gif")
 wn.addshape("tabasco.gif")
+wn.addshape("bbq_sauce.gif")
 rectCors = ((-10,20),(10,20),(10,-20),(-10,-20))
 wn.register_shape('rectangle',rectCors)
 score = 0
@@ -50,6 +51,9 @@ burrito.speed(0)
 burrito.shape("burrito.gif")
 burrito.penup()
 burrito.hideturtle()
+global burritovalue
+burritovalue = False
+
 
 # Score rate
 score_rate = 1
@@ -123,8 +127,10 @@ while game_start != True:
 ####################
 tabasco = trtl.Turtle()
 tabasco_writer = trtl.Turtle()
+bbq_sauce = trtl.Turtle()
+bbq_sauce_writer = trtl.Turtle()
 
-sauce_list = [tabasco, tabasco_writer]
+sauce_list = [tabasco, tabasco_writer, bbq_sauce, bbq_sauce_writer]
 for sauces in sauce_list:
   sauces.penup()
   sauces.speed(0)
@@ -144,13 +150,14 @@ for i in range(5):
 
 #-----tabasco-----
 tabasco_delay = 5
+tabasco_tacos = 1
 tabasco.setposition(285, 130)
 tabasco.shape("tabasco.gif")
 tabasco_amount = 0
 tabasco_cost = (tabasco_amount+1)**2
 
 def tabasco_click():
-  update_score(tabasco_amount)
+  update_score(tabasco_amount*tabasco_tacos)
   tabasco_autoclick()
 
 def tabasco_autoclick():
@@ -183,15 +190,71 @@ def update_tabasco():
 tabasco_autoclick()
 
 #-----bbq sauce-----
+bbq_sauce_delay = 1
+bbq_sauce_tacos = 5
+bbq_sauce.setposition(285, 40)
+bbq_sauce.shape("bbq_sauce.gif")
+bbq_sauce_amount = 0
+bbq_sauce_cost = (bbq_sauce_amount+1)**2
+
+def bbq_sauce_click():
+  update_score(bbq_sauce_amount*bbq_sauce_tacos)
+  bbq_sauce_autoclick()
+
+def bbq_sauce_autoclick():
+  wn.ontimer(bbq_sauce_click, bbq_sauce_delay*1000)
+
+def buy_bbq_sauce(x, y):
+  global bbq_sauce_amount, score, bbq_sauce_cost
+  if score >= bbq_sauce_cost:
+    bbq_sauce_amount += 1
+    score -= bbq_sauce_cost
+    update_score(0)
+    bbq_sauce_cost = (bbq_sauce_amount+1)**2
+    update_bbq_sauce()
+
+# bbq_sauce writer
+bbq_sauce_writer.hideturtle()
+bbq_sauce_writer.setposition(310, 30)
+bbq_sauce_writer.write("0 oz. of BBQ Sauce", font = font_setup)
+bbq_sauce_writer.setposition(310, 10)
+bbq_sauce_writer.write("Current cost: " + str(bbq_sauce_cost) + " tacos")
+
+def update_bbq_sauce():
+  global bbq_sauce_amount
+  bbq_sauce_writer.clear()
+  bbq_sauce_writer.setposition(310, 30)
+  bbq_sauce_writer.write(str(bbq_sauce_amount) + " oz. of BBQ Sauce", font = font_setup)
+  bbq_sauce_writer.setposition(310, 10)
+  bbq_sauce_writer.write("Current cost: " + str(bbq_sauce_cost) + " tacos")
+
+bbq_sauce_autoclick()
 
 ########################
 ### Burrito Loot Box ###
 ########################
+global checkvalue
+checkvalue = False
+
+def check():
+  global burritovalue
+  if burritovalue != True:
+    hideturtle()
+    burritovalue = False
+  else:
+    global checkvalue
+    checkvalue = True
+    burrito.showturtle()
+
 def countdown():
   burrito.setposition(rand.randint(-300, 90), rand.randint(50, 120))
   burrito.showturtle()
+  wn.ontimer(check, rand.randint(30000,120000))
+
+def hideturtle():
+  burrito.hideturtle()
   wn.ontimer(countdown, rand.randint(30000,120000))
-wn.ontimer(countdown,rand.randint(30000,120000))
+wn.ontimer(countdown, rand.randint(30000,120000))
 
 #When the taco is clicked increase the score
 def taco_click(x, y):
@@ -199,6 +262,8 @@ def taco_click(x, y):
 
 #When the burrito is clicked ask a random math question
 def burrito_click(x, y):
+  global burritovalue
+  burritovalue = True
   lootbox()
 
 #Asking the random math question
@@ -208,8 +273,19 @@ def lootbox():
   while answer != math_anwers[number]:
     answer = wn.textinput("Problem","Try again what is " + (math_problems[number]))
   else:
-    update_score(rand.randint(50,150))
+    if score_rate <= 7:
+      update_score(rand.randint(50,150))
+    elif score_rate >= 8 and score_rate <= 14:
+      update_score(rand.randint(200,350))
+    elif score_rate >= 15 and score_rate <= 20:
+      update_score(rand.randint(1000,2000))
+    elif score_rate >= 21 and score_rate <= 30:
+      update_score(rand.randint(3000,4500))
     burrito.hideturtle()
+    if checkvalue != False:
+      wn.ontimer(countdown, rand.randint(30000,120000))
+    
+
 
 
 #update the amount of tacos
@@ -249,6 +325,7 @@ def upgrade():
 
 #-----click detection-----
 tabasco.onclick(buy_tabasco)
+bbq_sauce.onclick(buy_bbq_sauce)
 burrito.onclick(burrito_click)
 button.onclick(button_click)
 taco.onclick(taco_click)
