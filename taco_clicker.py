@@ -20,6 +20,9 @@ wn.addshape("fork.gif")
 wn.addshape("background.gif")
 wn.addshape("tabasco.gif")
 wn.addshape("bbq_sauce.gif")
+wn.addshape("ketchup.gif")
+wn.addshape("mayonnaise.gif")
+wn.addshape("soy_sauce.gif")
 rectCors = ((-10,20),(10,20),(10,-20),(-10,-20))
 wn.register_shape('rectangle',rectCors)
 score = 0
@@ -129,8 +132,14 @@ tabasco = trtl.Turtle()
 tabasco_writer = trtl.Turtle()
 bbq_sauce = trtl.Turtle()
 bbq_sauce_writer = trtl.Turtle()
+ketchup = trtl.Turtle()
+ketchup_writer = trtl.Turtle()
+mayonnaise = trtl.Turtle()
+mayonnaise_writer = trtl.Turtle()
+soy_sauce = trtl.Turtle()
+soy_sauce_writer = trtl.Turtle()
 
-sauce_list = [tabasco, tabasco_writer, bbq_sauce, bbq_sauce_writer]
+sauce_list = [tabasco, tabasco_writer, bbq_sauce, bbq_sauce_writer, ketchup, ketchup_writer, mayonnaise, mayonnaise_writer, soy_sauce, soy_sauce_writer]
 for sauces in sauce_list:
   sauces.penup()
   sauces.speed(0)
@@ -154,7 +163,7 @@ tabasco_tacos = 1
 tabasco.setposition(285, 130)
 tabasco.shape("tabasco.gif")
 tabasco_amount = 0
-tabasco_cost = (tabasco_amount+1)**2
+tabasco_cost = 2
 
 def tabasco_click():
   update_score(tabasco_amount*tabasco_tacos)
@@ -169,7 +178,7 @@ def buy_tabasco(x, y):
     tabasco_amount += 1
     score -= tabasco_cost
     update_score(0)
-    tabasco_cost = (tabasco_amount+1)**2
+    tabasco_cost = 2 * (round(1.15**tabasco_amount)+tabasco_amount)
     update_tabasco()
 
 # tabasco writer
@@ -190,12 +199,12 @@ def update_tabasco():
 tabasco_autoclick()
 
 #-----bbq sauce-----
-bbq_sauce_delay = 1
-bbq_sauce_tacos = 5
+bbq_sauce_delay = 3
+bbq_sauce_tacos = 15
 bbq_sauce.setposition(285, 40)
 bbq_sauce.shape("bbq_sauce.gif")
 bbq_sauce_amount = 0
-bbq_sauce_cost = (bbq_sauce_amount+1)**2
+bbq_sauce_cost = 1000
 
 def bbq_sauce_click():
   update_score(bbq_sauce_amount*bbq_sauce_tacos)
@@ -210,7 +219,7 @@ def buy_bbq_sauce(x, y):
     bbq_sauce_amount += 1
     score -= bbq_sauce_cost
     update_score(0)
-    bbq_sauce_cost = (bbq_sauce_amount+1)**2
+    bbq_sauce_cost = 1000 + 100*(round(1.15**bbq_sauce_amount)+bbq_sauce_amount)
     update_bbq_sauce()
 
 # bbq_sauce writer
@@ -229,6 +238,129 @@ def update_bbq_sauce():
   bbq_sauce_writer.write("Current cost: " + str(bbq_sauce_cost) + " tacos")
 
 bbq_sauce_autoclick()
+
+#-----ketchup-----
+ketchup_delay = 1
+ketchup_tacos = 40
+ketchup.setposition(285, -50)
+ketchup.shape("ketchup.gif")
+ketchup_amount = 0
+ketchup_cost = 11000
+
+def ketchup_click():
+  update_score(ketchup_amount*ketchup_tacos)
+  ketchup_autoclick()
+
+def ketchup_autoclick():
+  wn.ontimer(ketchup_click, ketchup_delay*1000)
+
+def buy_ketchup(x, y):
+  global ketchup_amount, score, ketchup_cost
+  if score >= ketchup_cost:
+    ketchup_amount += 1
+    score -= ketchup_cost
+    update_score(0)
+    ketchup_cost = 11000 + 1000*(round(1.15**ketchup_amount)+ketchup_amount)
+    update_ketchup()
+
+# ketchup writer
+ketchup_writer.hideturtle()
+ketchup_writer.setposition(310, -60)
+ketchup_writer.write("0 oz. of BBQ Sauce", font = font_setup)
+ketchup_writer.setposition(310, -80)
+ketchup_writer.write("Current cost: " + str(ketchup_cost) + " tacos")
+
+def update_ketchup():
+  global ketchup_amount
+  ketchup_writer.clear()
+  ketchup_writer.setposition(310, -60)
+  ketchup_writer.write(str(ketchup_amount) + " oz. of Ketchup", font = font_setup)
+  ketchup_writer.setposition(310, -80)
+  ketchup_writer.write("Current cost: " + str(ketchup_cost) + " tacos")
+
+ketchup_autoclick()
+
+#-----mayonnaise-----
+mayonnaise_delay = 1
+mayonnaise_tacos = 5
+mayonnaise.setposition(285, -140)
+mayonnaise.shape("mayonnaise.gif")
+mayonnaise_amount = 0
+mayonnaise_cost = 120000
+
+def mayonnaise_click():
+  update_score(mayonnaise_amount*mayonnaise_tacos)
+  mayonnaise_autoclick()
+
+def mayonnaise_autoclick():
+  wn.ontimer(mayonnaise_click, mayonnaise_delay*1000)
+
+def buy_mayonnaise(x, y):
+  global mayonnaise_amount, score, mayonnaise_cost
+  if score >= mayonnaise_cost:
+    mayonnaise_amount += 1
+    score -= mayonnaise_cost
+    update_score(0)
+    mayonnaise_cost = 120000 + 10000*(round(1.15**mayonnaise_amount)+mayonnaise_amount)
+    update_mayonnaise()
+
+# mayonnaise writer
+mayonnaise_writer.hideturtle()
+mayonnaise_writer.setposition(310, -150)
+mayonnaise_writer.write("0 oz. of BBQ Sauce", font = font_setup)
+mayonnaise_writer.setposition(310, -170)
+mayonnaise_writer.write("Current cost: " + str(mayonnaise_cost) + " tacos")
+
+def update_mayonnaise():
+  global mayonnaise_amount
+  mayonnaise_writer.clear()
+  mayonnaise_writer.setposition(310, -150)
+  mayonnaise_writer.write(str(mayonnaise_amount) + " oz. of mayonnaise", font = font_setup)
+  mayonnaise_writer.setposition(310, -170)
+  mayonnaise_writer.write("Current cost: " + str(mayonnaise_cost) + " tacos")
+
+mayonnaise_autoclick()
+
+#-----soy sauce-----
+soy_sauce_delay = 1
+soy_sauce_tacos = 5
+soy_sauce.setposition(285, -230)
+soy_sauce.shape("soy_sauce.gif")
+soy_sauce_amount = 0
+soy_sauce_cost = 1300000
+
+def soy_sauce_click():
+  update_score(soy_sauce_amount*soy_sauce_tacos)
+  soy_sauce_autoclick()
+
+def soy_sauce_autoclick():
+  wn.ontimer(soy_sauce_click, soy_sauce_delay*1000)
+
+def buy_soy_sauce(x, y):
+  global soy_sauce_amount, score, soy_sauce_cost
+  if score >= soy_sauce_cost:
+    soy_sauce_amount += 1
+    score -= soy_sauce_cost
+    update_score(0)
+    soy_sauce_cost = 1300000 + 100000*(round(1.15**soy_sauce_amount)+soy_sauce_amount)
+    update_soy_sauce()
+
+# soy_sauce writer
+soy_sauce_writer.hideturtle()
+soy_sauce_writer.setposition(310, -240)
+soy_sauce_writer.write("0 oz. of BBQ Sauce", font = font_setup)
+soy_sauce_writer.setposition(310, -260)
+soy_sauce_writer.write("Current cost: " + str(soy_sauce_cost) + " tacos")
+
+def update_soy_sauce():
+  global soy_sauce_amount
+  soy_sauce_writer.clear()
+  soy_sauce_writer.setposition(310, -240)
+  soy_sauce_writer.write(str(soy_sauce_amount) + " oz. of soy_sauce", font = font_setup)
+  soy_sauce_writer.setposition(310, -260)
+  soy_sauce_writer.write("Current cost: " + str(soy_sauce_cost) + " tacos")
+
+soy_sauce_autoclick()
 
 ########################
 ### Burrito Loot Box ###
@@ -326,6 +458,9 @@ def upgrade():
 #-----click detection-----
 tabasco.onclick(buy_tabasco)
 bbq_sauce.onclick(buy_bbq_sauce)
+ketchup.onclick(buy_ketchup)
+mayonnaise.onclick(buy_mayonnaise)
+soy_sauce.onclick(buy_soy_sauce)
 burrito.onclick(burrito_click)
 button.onclick(button_click)
 taco.onclick(taco_click)
