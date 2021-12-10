@@ -1,28 +1,42 @@
+#################
+### Importing ###
+#################
 import random as rand
 import turtle as trtl
-import math
-import time
-
-
-##################
-### Game setup ###
-##################
-
+from threading import Event
 wn = trtl.Screen()
-
 wn.setup(580,449)
-wn.addshape("taco.gif")
+
+# Menu shapes
 wn.addshape("menu.gif")
+wn.addshape("menuhelp.gif")
+wn.addshape("menuplay.gif")
+wn.addshape("menutaco.gif")
+# Game Sprites
+wn.addshape("taco.gif")
 wn.addshape("burrito.gif")
 wn.addshape("buttonunpressed.gif")
 wn.addshape("buttonpressed.gif")
 wn.addshape("fork.gif")
 wn.addshape("background.gif")
+# Autoclicker Sprites
 wn.addshape("tabasco.gif")
 wn.addshape("bbq_sauce.gif")
 wn.addshape("ketchup.gif")
 wn.addshape("mayonnaise.gif")
 wn.addshape("soy_sauce.gif")
+# Timer images
+wn.addshape("timer0.gif")
+wn.addshape("timer1.gif")
+wn.addshape("timer2.gif")
+wn.addshape("timer3.gif")
+wn.addshape("timer4.gif")
+wn.addshape("timer5.gif")
+wn.addshape("timer6.gif")
+
+##################
+### Game Setup ###
+##################
 rectCors = ((-10,20),(10,20),(10,-20),(-10,-20))
 wn.register_shape('rectangle',rectCors)
 score = 0
@@ -41,7 +55,6 @@ score_writer.pendown()
 # Font
 font_setup = ("Arial", "15", "normal")
 
-
 # Taco per click upgrade Button
 button = trtl.Turtle()
 button.speed(0)
@@ -57,9 +70,8 @@ burrito.hideturtle()
 global burritovalue
 burritovalue = False
 
-
 # Score rate
-score_rate = 1
+score_rate = 10000000
 upgrade_cost = (score_rate*3)**2
 
 rate = trtl.Turtle()
@@ -82,28 +94,52 @@ next.pendown()
 taco = trtl.Turtle()
 score = 0
 taco.shape("taco.gif")
-
 taco.speed(0)
 taco.penup() 
 taco.setposition(-190, -150)
 
 font_setup = ("Arial", "15", "normal")
 
+# TPS writer
+tps = trtl.Turtle()
+tps.hideturtle()
+tps.penup()
+tps.speed(0)
+tps.setposition(-510, 138)
+tps.write("Current tacos per second: 0")
+tacos_per_second = 0
 
-#-----game start-----
+#update the amount of tacos
+def update_score(amount):
+  global score
+  score_writer.clear()
+  score += amount
+  score_writer.write(str(score) + " tacos", font = font_setup)
+
+
+###################
+### Menu Screen ###
+###################
+textwriter = trtl.Turtle()
+textwriter.speed(0)
+#textwriter.shape("menutaco.gif")
+textwriter.setposition(-180,50)
+
 wn.bgpic("menu.gif")
 game_start = False
 settings = trtl.Turtle()
 start_button = trtl.Turtle()
-start_button.color("lemonchiffon")
-start_button.shape("fork.gif")
+start_button.speed(0)
+start_button.penup()
+start_button.shape("menuplay.gif")
 
-start_button.shapesize(4)
 
+bell = trtl.Turtle()
+bell.pu()
+bell.speed(0)
+#bell.shape("menuhelp.gif")
+bell.setposition(0, -100)
 
-######################
-### Game functions ###
-######################
 def start_game(x, y):
   global game_start
   wn.setup(1200,700)
@@ -120,29 +156,32 @@ def start_game(x, y):
 
 start_button.onclick(start_game)
 
-
 while game_start != True:
   taco.hideturtle()
-  button.hideturtle()
+
 
 ####################
 ### Autoclickers ###
 ####################
+
+# sauces
 tabasco = trtl.Turtle()
-tabasco_writer = trtl.Turtle()
 bbq_sauce = trtl.Turtle()
-bbq_sauce_writer = trtl.Turtle()
 ketchup = trtl.Turtle()
-ketchup_writer = trtl.Turtle()
 mayonnaise = trtl.Turtle()
-mayonnaise_writer = trtl.Turtle()
 soy_sauce = trtl.Turtle()
+
+# sauce text writers
+tabasco_writer = trtl.Turtle()
+bbq_sauce_writer = trtl.Turtle()
+ketchup_writer = trtl.Turtle()
+mayonnaise_writer = trtl.Turtle()
 soy_sauce_writer = trtl.Turtle()
 
 sauce_list = [tabasco, tabasco_writer, bbq_sauce, bbq_sauce_writer, ketchup, ketchup_writer, mayonnaise, mayonnaise_writer, soy_sauce, soy_sauce_writer]
-for sauces in sauce_list:
-  sauces.penup()
-  sauces.speed(0)
+for sauce in sauce_list:
+  sauce.penup()
+  sauce.speed(0)
 
 # Menu writer
 sauce_font = ("Times New Roman", "17", "italic")
@@ -156,7 +195,6 @@ for i in range(5):
   menu_writer.setposition(menu_item_coords[i])
   menu_writer.write(menu_item_list[i], font = sauce_font)
 
-
 #-----tabasco-----
 tabasco_delay = 5
 tabasco_tacos = 1
@@ -164,22 +202,21 @@ tabasco.setposition(285, 130)
 tabasco.shape("tabasco.gif")
 tabasco_amount = 0
 tabasco_cost = 2
-
-def tabasco_click():
-  update_score(tabasco_amount*tabasco_tacos)
-  tabasco_autoclick()
-
-def tabasco_autoclick():
-  wn.ontimer(tabasco_click, tabasco_delay*1000)
+tabasco_bought = False
 
 def buy_tabasco(x, y):
-  global tabasco_amount, score, tabasco_cost
+  global tabasco_amount, score, tabasco_cost, tacos_per_second, tabasco_bought, ttimer_on
   if score >= tabasco_cost:
     tabasco_amount += 1
     score -= tabasco_cost
     update_score(0)
     tabasco_cost = 2 * (round(1.15**tabasco_amount)+tabasco_amount)
     update_tabasco()
+    tacos_per_second += 0.2
+    if tabasco_bought == False:
+      tabasco_bought = True
+      ttimer_on = True
+      timer()
 
 # tabasco writer
 tabasco_writer.hideturtle()
@@ -196,31 +233,28 @@ def update_tabasco():
   tabasco_writer.setposition(310, 100)
   tabasco_writer.write("Current cost: " + str(tabasco_cost) + " tacos")
 
-tabasco_autoclick()
 
 #-----bbq sauce-----
 bbq_sauce_delay = 3
-bbq_sauce_tacos = 15
+bbq_sauce_tacos = 30
 bbq_sauce.setposition(285, 40)
 bbq_sauce.shape("bbq_sauce.gif")
 bbq_sauce_amount = 0
 bbq_sauce_cost = 1000
-
-def bbq_sauce_click():
-  update_score(bbq_sauce_amount*bbq_sauce_tacos)
-  bbq_sauce_autoclick()
-
-def bbq_sauce_autoclick():
-  wn.ontimer(bbq_sauce_click, bbq_sauce_delay*1000)
+bbq_sauce_bought = False
 
 def buy_bbq_sauce(x, y):
-  global bbq_sauce_amount, score, bbq_sauce_cost
+  global bbq_sauce_amount, score, bbq_sauce_cost, tacos_per_second, bbq_sauce_bought, btimer_on
   if score >= bbq_sauce_cost:
     bbq_sauce_amount += 1
     score -= bbq_sauce_cost
     update_score(0)
     bbq_sauce_cost = 1000 + 100*(round(1.15**bbq_sauce_amount)+bbq_sauce_amount)
     update_bbq_sauce()
+    tacos_per_second += 0.2
+    if bbq_sauce_bought == False:
+      bbq_sauce_bought = True
+      btimer_on = True
 
 # bbq_sauce writer
 bbq_sauce_writer.hideturtle()
@@ -237,36 +271,32 @@ def update_bbq_sauce():
   bbq_sauce_writer.setposition(310, 10)
   bbq_sauce_writer.write("Current cost: " + str(bbq_sauce_cost) + " tacos")
 
-bbq_sauce_autoclick()
-
 #-----ketchup-----
 ketchup_delay = 1
-ketchup_tacos = 40
+ketchup_tacos = 150
 ketchup.setposition(285, -50)
 ketchup.shape("ketchup.gif")
 ketchup_amount = 0
 ketchup_cost = 11000
-
-def ketchup_click():
-  update_score(ketchup_amount*ketchup_tacos)
-  ketchup_autoclick()
-
-def ketchup_autoclick():
-  wn.ontimer(ketchup_click, ketchup_delay*1000)
+ketchup_bought = False
 
 def buy_ketchup(x, y):
-  global ketchup_amount, score, ketchup_cost
+  global ketchup_amount, score, ketchup_cost, tacos_per_second, ketchup_bought, ktimer_on
   if score >= ketchup_cost:
     ketchup_amount += 1
     score -= ketchup_cost
     update_score(0)
     ketchup_cost = 11000 + 1000*(round(1.15**ketchup_amount)+ketchup_amount)
     update_ketchup()
+    tacos_per_second += 0.2
+    if ketchup_bought == False:
+      ketchup_bought = True
+      ktimer_on = True
 
 # ketchup writer
 ketchup_writer.hideturtle()
 ketchup_writer.setposition(310, -60)
-ketchup_writer.write("0 oz. of BBQ Sauce", font = font_setup)
+ketchup_writer.write("0 oz. of Ketchup", font = font_setup)
 ketchup_writer.setposition(310, -80)
 ketchup_writer.write("Current cost: " + str(ketchup_cost) + " tacos")
 
@@ -278,36 +308,33 @@ def update_ketchup():
   ketchup_writer.setposition(310, -80)
   ketchup_writer.write("Current cost: " + str(ketchup_cost) + " tacos")
 
-ketchup_autoclick()
 
 #-----mayonnaise-----
 mayonnaise_delay = 1
-mayonnaise_tacos = 5
+mayonnaise_tacos = 2000
 mayonnaise.setposition(285, -140)
 mayonnaise.shape("mayonnaise.gif")
 mayonnaise_amount = 0
 mayonnaise_cost = 120000
-
-def mayonnaise_click():
-  update_score(mayonnaise_amount*mayonnaise_tacos)
-  mayonnaise_autoclick()
-
-def mayonnaise_autoclick():
-  wn.ontimer(mayonnaise_click, mayonnaise_delay*1000)
+mayonnaise_bought = False
 
 def buy_mayonnaise(x, y):
-  global mayonnaise_amount, score, mayonnaise_cost
+  global mayonnaise_amount, score, mayonnaise_cost, tacos_per_second, mayonnaise_bought, mtimer_on
   if score >= mayonnaise_cost:
     mayonnaise_amount += 1
     score -= mayonnaise_cost
     update_score(0)
     mayonnaise_cost = 120000 + 10000*(round(1.15**mayonnaise_amount)+mayonnaise_amount)
     update_mayonnaise()
+    tacos_per_second += 0.2
+    if mayonnaise_bought == False:
+      mayonnaise_bought = True
+      mtimer_on = True
 
 # mayonnaise writer
 mayonnaise_writer.hideturtle()
 mayonnaise_writer.setposition(310, -150)
-mayonnaise_writer.write("0 oz. of BBQ Sauce", font = font_setup)
+mayonnaise_writer.write("0 oz. of mayonnaise", font = font_setup)
 mayonnaise_writer.setposition(310, -170)
 mayonnaise_writer.write("Current cost: " + str(mayonnaise_cost) + " tacos")
 
@@ -319,36 +346,33 @@ def update_mayonnaise():
   mayonnaise_writer.setposition(310, -170)
   mayonnaise_writer.write("Current cost: " + str(mayonnaise_cost) + " tacos")
 
-mayonnaise_autoclick()
 
 #-----soy sauce-----
 soy_sauce_delay = 1
-soy_sauce_tacos = 5
+soy_sauce_tacos = 10000
 soy_sauce.setposition(285, -230)
 soy_sauce.shape("soy_sauce.gif")
 soy_sauce_amount = 0
 soy_sauce_cost = 1300000
-
-def soy_sauce_click():
-  update_score(soy_sauce_amount*soy_sauce_tacos)
-  soy_sauce_autoclick()
-
-def soy_sauce_autoclick():
-  wn.ontimer(soy_sauce_click, soy_sauce_delay*1000)
+soy_sauce_bought = False
 
 def buy_soy_sauce(x, y):
-  global soy_sauce_amount, score, soy_sauce_cost
+  global soy_sauce_amount, score, soy_sauce_cost, tacos_per_second, soy_sauce_bought, stimer_on
   if score >= soy_sauce_cost:
     soy_sauce_amount += 1
     score -= soy_sauce_cost
     update_score(0)
     soy_sauce_cost = 1300000 + 100000*(round(1.15**soy_sauce_amount)+soy_sauce_amount)
     update_soy_sauce()
+    tacos_per_second += 0.2
+    if soy_sauce_bought == False:
+      soy_sauce_bought = True
+      stimer_on = True
 
 # soy_sauce writer
 soy_sauce_writer.hideturtle()
 soy_sauce_writer.setposition(310, -240)
-soy_sauce_writer.write("0 oz. of BBQ Sauce", font = font_setup)
+soy_sauce_writer.write("0 oz. of Soy Sauce", font = font_setup)
 soy_sauce_writer.setposition(310, -260)
 soy_sauce_writer.write("Current cost: " + str(soy_sauce_cost) + " tacos")
 
@@ -356,11 +380,92 @@ def update_soy_sauce():
   global soy_sauce_amount
   soy_sauce_writer.clear()
   soy_sauce_writer.setposition(310, -240)
-  soy_sauce_writer.write(str(soy_sauce_amount) + " oz. of soy_sauce", font = font_setup)
+  soy_sauce_writer.write(str(soy_sauce_amount) + " oz. of Soy Sauce", font = font_setup)
   soy_sauce_writer.setposition(310, -260)
   soy_sauce_writer.write("Current cost: " + str(soy_sauce_cost) + " tacos")
 
-soy_sauce_autoclick()
+
+#############
+### Timer ###
+#############
+# Timers for tabasco, bbq, ketchup, mayo, and soy sauce
+ttimer = trtl.Turtle()
+btimer = trtl.Turtle()
+ktimer = trtl.Turtle()
+mtimer = trtl.Turtle()
+stimer = trtl.Turtle()
+timer_list = [ttimer, btimer, ktimer, mtimer, stimer]
+for timer in timer_list:
+  timer.speed(0)
+  timer.penup()
+  timer.shape("timer0.gif")
+  timer.setposition(550, 130 - 90*timer_list.index(timer))
+
+# variables to check if a certain sauce is activated
+ttimer_on = False
+btimer_on = False
+ktimer_on = False
+mtimer_on = False
+stimer_on = False
+
+# functions to shorten code for 1 second sauces
+def one_second(sauce_timer):
+  sauce_timer.shape("timer0.gif")
+  one_second_image(sauce_timer)
+
+def one_second_image(sauce_timer):
+  wn.ontimer(sauce_timer.shape("timer6.gif"), 1)
+
+# checking which timers are on
+def timer_check():
+  if ttimer_on == True: 
+    if level == 1: ttimer.shape("timer1.gif")
+    elif level == 2: ttimer.shape("timer2.gif")
+    elif level == 3: ttimer.shape("timer3.gif")
+    elif level == 4: ttimer.shape("timer4.gif")
+    elif level == 5: ttimer.shape("timer5.gif")
+    elif level == 6: ttimer.shape("timer6.gif"), update_score(tabasco_amount*tabasco_tacos)
+  if btimer_on == True: 
+    if level == 1 or level == 4: btimer.shape("timer2.gif")
+    elif level == 2 or level == 5: btimer.shape("timer4.gif")
+    elif level == 3 or level == 6: btimer.shape("timer6.gif"), update_score(bbq_sauce_amount*bbq_sauce_tacos)
+  if ktimer_on == True: update_score(ketchup_amount*ketchup_tacos), one_second(ktimer)
+  if mtimer_on == True: update_score(mayonnaise_amount*mayonnaise_tacos), one_second(mtimer)
+  if stimer_on == True: update_score(soy_sauce_amount*soy_sauce_tacos), one_second(stimer)
+
+# timer system
+level = 1
+def timer():
+  global level
+  if level == 1:
+    timer_check()
+    level = level + 1
+    wn.ontimer(timer, 1000)
+
+  elif level == 2:
+    timer_check()
+    level = level + 1
+    wn.ontimer(timer, 1000)
+
+  elif level == 3:
+    timer_check()
+    level = level + 1
+    wn.ontimer(timer, 1000)
+
+  elif level == 4:
+    timer_check()
+    level = level + 1
+    wn.ontimer(timer, 1000)
+
+  elif level == 5:
+    timer_check()
+    level = level + 1
+    wn.ontimer(timer, 1000)
+
+  elif level == 6:
+    timer_check()
+    level = 1
+    wn.ontimer(timer, 1000)
 
 ########################
 ### Burrito Loot Box ###
@@ -417,16 +522,6 @@ def lootbox():
     if checkvalue != False:
       wn.ontimer(countdown, rand.randint(30000,120000))
     
-
-
-
-#update the amount of tacos
-def update_score(amount):
-  global score
-  score_writer.clear()
-  score += amount
-  print(score)
-  score_writer.write(str(score) + " tacos", font = font_setup)
   
 ######################
 ### Upgrade Button ###
@@ -464,7 +559,7 @@ soy_sauce.onclick(buy_soy_sauce)
 burrito.onclick(burrito_click)
 button.onclick(button_click)
 taco.onclick(taco_click)
-button.showturtle()
+
 
 wn.listen()
 wn.mainloop()
