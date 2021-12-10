@@ -4,6 +4,7 @@
 import random as rand
 import turtle as trtl
 from threading import Event
+import winsound
 wn = trtl.Screen()
 wn.setup(580,449)
 
@@ -14,7 +15,6 @@ wn.addshape("menuplay.gif")
 wn.addshape("menutaco.gif")
 wn.addshape("arrow.gif")
 wn.addshape("arrowleft.gif")
-
 # Game Sprites
 wn.addshape("taco.gif")
 wn.addshape("burrito.gif")
@@ -74,7 +74,7 @@ global burritovalue
 burritovalue = False
 
 # Score rate
-score_rate = 10000000
+score_rate = 1
 upgrade_cost = (score_rate*3)**2
 
 rate = trtl.Turtle()
@@ -120,6 +120,7 @@ def tps_update():
 #update the amount of tacos
 def update_score(amount):
   global tutorialmode, tutorialnumber
+
   if tutorialmode == True and tutorialnumber == 0:
     arrow.clear()
     score_writer.clear()
@@ -134,6 +135,7 @@ def update_score(amount):
     arrow.setposition(-590, -255)
     arrow.write("your score to buy upgrades",font = ("Arial", "8", "italic"))
     tutorialnumber = 1
+
   elif tutorialmode == True and tutorialnumber == 1:
     arrow.clear()
     arrow.setposition(-540, -210)
@@ -145,6 +147,7 @@ def update_score(amount):
     arrow.setposition(-590, -225)
     arrow.write("of tacos you get per click",font = ("Arial", "8", "italic"))
     tutorialnumber = 2
+
   elif tutorialmode == True and tutorialnumber == 2:
     arrow.clear()
     arrow.setposition(-350, 110)
@@ -157,6 +160,7 @@ def update_score(amount):
     arrow.setposition(-400,105)
     arrow.write("you press it to upgade your cps",font = ("Arial", "8", "italic"))
     tutorialnumber = 3
+
   elif tutorialmode == True and tutorialnumber == 3:
     arrow.clear()
     arrow.setposition(-375, 180)
@@ -170,6 +174,7 @@ def update_score(amount):
     arrow.setposition(-425,170)
     arrow.write("subtracted from your score",font = ("Arial", "8", "italic"))
     tutorialnumber = 4
+
   elif tutorialmode == True and tutorialnumber == 4:
     arrow.clear()
     arrow.setposition(180, 130)
@@ -184,10 +189,10 @@ def update_score(amount):
     arrow.setposition(100,110)
     arrow.write("per timer",font = ("Arial", "8", "italic"))
     tutorialnumber = 5
+
   elif tutorialmode == True and tutorialnumber == 5:
     arrow.clear()
     arrow.setposition(180, 130)
-    
     arrow.showturtle()
     arrow.stamp()
     arrow.hideturtle()
@@ -212,6 +217,7 @@ def update_score(amount):
     arrow.setposition(100,110)
     arrow.write("ketchup has a 150 multiplier",font = ("Arial", "8", "italic"))
     tutorialnumber = 7
+
   elif tutorialmode == True and tutorialnumber == 7:
     arrow.clear()
     arrow.setposition(180, 130)
@@ -236,10 +242,38 @@ def update_score(amount):
     arrow.write("are timers, when the timers fill ",font = ("Arial", "8", "italic"))
     arrow.setposition(100,110)
     arrow.write("the autoclicker adds to the score.",font = ("Arial", "7", "italic"))
-    
     tutorialnumber = 9
 
   elif tutorialmode == True and tutorialnumber == 9:
+    arrow.clear()
+    burrito.setposition(100, 110)
+    burrito.showturtle()
+    arrow.setposition(-140, 110)
+    arrow.showturtle()
+    arrow.stamp()
+    arrow.hideturtle()
+    arrow.setposition(-220, 110)
+    arrow.write("These are burrito loot boxes! ",font = ("Arial", "8", "italic"))
+    arrow.setposition(-220, 100)
+    arrow.write("They will appear on your screen ",font = ("Arial", "8", "italic"))
+    arrow.setposition(-220,90)
+    arrow.write("once every while.",font = ("Arial", "7", "italic"))
+    tutorialnumber = 10
+
+  elif tutorialmode == True and tutorialnumber == 10:
+    arrow.clear()
+    arrow.showturtle()
+    arrow.stamp()
+    arrow.hideturtle()
+    arrow.setposition(-220, 110)
+    arrow.write("Within 10 secobnd",font = ("Arial", "8", "italic"))
+    arrow.setposition(-220, 100)
+    arrow.write("They will appear on your screen ",font = ("Arial", "8", "italic"))
+    arrow.setposition(-220,90)
+    arrow.write("once every while.",font = ("Arial", "7", "italic"))
+    tutorialnumber = 11
+
+  elif tutorialmode == True and tutorialnumber == 11:
     arrow.clear()
     arrow.setposition(180, 130)
     arrow.showturtle()
@@ -247,21 +281,19 @@ def update_score(amount):
     arrow.hideturtle()
     arrow.setposition(100,120)
     arrow.write("Thats the Game! ",font = ("Arial", "15", "italic"))    
-    tutorialnumber = 10
+    tutorialnumber = 12
 
-  elif tutorialmode == True and tutorialnumber == 10:
+  elif tutorialmode == True and tutorialnumber == 12:
     arrow.clear()
     tutorialmode = False
     tutorialnumber = 0
-    
     help.showturtle()
     start_button.showturtle()
     textwriter.showturtle()
 
-
     wn.setup(580,449)
     wn.bgpic("menu.gif")
-    
+
     taco.hideturtle()
     score_writer.clear()
     next.clear()
@@ -271,8 +303,6 @@ def update_score(amount):
     ketchup.hideturtle()
     mayonnaise.hideturtle()
     soy_sauce.hideturtle()
-
-
 
   else:
     global score
@@ -284,13 +314,14 @@ def update_score(amount):
 ###################
 ### Menu Screen ###
 ###################
+winsound.PlaySound("menu_theme", winsound.SND_ASYNC)
+
 
 global tutorialmode
 tutorialmode = False
 global tutorialnumber
 tutorialnumber = 0
 textwriter = trtl.Turtle()
-textwriter.hideturtle()
 textwriter.speed(0)
 textwriter.pu()
 textwriter.shape("menutaco.gif")
@@ -298,8 +329,6 @@ textwriter.setposition(0,100)
 
 wn.bgpic("menu.gif")
 game_start = False
-settings = trtl.Turtle()
-settings.hideturtle()
 start_button = trtl.Turtle()
 start_button.speed(0)
 start_button.penup()
@@ -307,7 +336,6 @@ start_button.shape("menuplay.gif")
 
 
 help = trtl.Turtle()
-help.hideturtle()
 help.pu()
 help.speed(0)
 help.shape("menuhelp.gif")
@@ -719,12 +747,12 @@ def check():
 def countdown():
   burrito.setposition(rand.randint(-300, 90), rand.randint(50, 120))
   burrito.showturtle()
-  wn.ontimer(check, rand.randint(30000,120000))
+  wn.ontimer(check, 10000)
 
 def hideturtle():
   burrito.hideturtle()
   wn.ontimer(countdown, rand.randint(30000,120000))
-wn.ontimer(countdown, rand.randint(30000,120000))
+wn.ontimer(countdown, rand.randin(30000,120000))
 
 #When the taco is clicked increase the score
 def taco_click(x, y):
@@ -746,11 +774,11 @@ def lootbox():
     if score_rate <= 7:
       update_score(rand.randint(50,150))
     elif score_rate >= 8 and score_rate <= 14:
-      update_score(rand.randint(200,350))
+      update_score(rand.randint(2000,3500))
     elif score_rate >= 15 and score_rate <= 20:
-      update_score(rand.randint(1000,2000))
+      update_score(rand.randint(10000,20000))
     elif score_rate >= 21 and score_rate <= 30:
-      update_score(rand.randint(3000,4500))
+      update_score(rand.randint(300000,450000))
     burrito.hideturtle()
     if checkvalue != False:
       wn.ontimer(countdown, rand.randint(30000,120000))
