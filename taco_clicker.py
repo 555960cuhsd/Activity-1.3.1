@@ -290,6 +290,7 @@ tutorialmode = False
 global tutorialnumber
 tutorialnumber = 0
 textwriter = trtl.Turtle()
+textwriter.hideturtle()
 textwriter.speed(0)
 textwriter.pu()
 textwriter.shape("menutaco.gif")
@@ -298,6 +299,7 @@ textwriter.setposition(0,100)
 wn.bgpic("menu.gif")
 game_start = False
 settings = trtl.Turtle()
+settings.hideturtle()
 start_button = trtl.Turtle()
 start_button.speed(0)
 start_button.penup()
@@ -305,6 +307,7 @@ start_button.shape("menuplay.gif")
 
 
 help = trtl.Turtle()
+help.hideturtle()
 help.pu()
 help.speed(0)
 help.shape("menuhelp.gif")
