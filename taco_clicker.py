@@ -760,7 +760,7 @@ def upgrade():
     button.shape("buttonpressed.gif")
     score_rate += 1
     rate.clear()
-    rate.write("Tacos per click: " + str(score_rate))
+    rate.write("tacos per click: " + str(score_rate))
     score -= upgrade_cost
     score_writer.clear()
     score_writer.write(str(score) + " tacos", font = font_setup)
@@ -848,6 +848,20 @@ def start_game(x, y):
   
   winsound.PlaySound("gamemusic.wav", winsound.SND_LOOP + winsound.SND_ASYNC)
   # screen setup
+  if replay != True:
+    wn.ontimer(countdown, rand.randint(30000,120000))
+  elif replay == True:
+    update_tabasco()
+    update_bbq_sauce()
+    update_ketchup()
+    update_mayonnaise()
+    update_soy_sauce()
+    tps_update()
+    timer()
+    next.clear()
+    score_writer.clear()
+    rate.clear()
+    replay == False
   help.hideturtle()
   menutaco.hideturtle()
   wn.setup(1200,700)
@@ -872,20 +886,6 @@ def start_game(x, y):
   button.showturtle()
   back_button.showturtle()
   wn.ontimer(taco_up, 1000)
-
-
-  if replay != True:
-    wn.ontimer(countdown, rand.randint(30000,120000))
-  elif replay == True:
-    update_tabasco()
-    update_bbq_sauce()
-    update_ketchup()
-    update_mayonnaise()
-    update_soy_sauce()
-    tps_update()
-    timer()
-    replay == False
-    
     
   
 # tutorial function
