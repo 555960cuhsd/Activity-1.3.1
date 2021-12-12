@@ -9,6 +9,7 @@ wn.setup(580,449)
 
 # Menu shapes
 wn.addshape("menu.gif")
+wn.addshape("menu0.gif")
 wn.addshape("menuhelp.gif")
 wn.addshape("menuplay.gif")
 wn.addshape("menutaco.gif")
@@ -774,7 +775,7 @@ def upgrade():
 ###################
 global menu
 menu = True
-wn.bgpic("menu.gif")
+wn.bgpic("menu0.gif")
 winsound.PlaySound("menu_theme", winsound.SND_LOOP + winsound.SND_ASYNC)
 tutorialmode = False
 tutorialnumber = 0
