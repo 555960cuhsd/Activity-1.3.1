@@ -77,7 +77,7 @@ global burritovalue
 burritovalue = False
 
 # Score rate
-score_rate = 100000
+score_rate = 1
 upgrade_cost = (score_rate*3)**2
 
 rate = trtl.Turtle()
