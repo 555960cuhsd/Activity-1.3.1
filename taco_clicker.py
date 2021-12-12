@@ -131,7 +131,8 @@ back_button.setposition(120, -250)
 
 replay = False
 def back(x, y):
-  global replay, game_start
+  global replay, game_start, menu
+  menu = True
   game_start = False
   replay = True
   wn.setup(580,449)
@@ -716,9 +717,9 @@ def taco_click(x, y):
 
 #When the burrito is clicked ask a random math question
 def burrito_click(x, y):
-  global burritovalue
-  burritovalue = True
-  lootbox()
+    global burritovalue
+    burritovalue = True
+    lootbox()
 
 #Asking the random math question
 def lootbox():
@@ -771,6 +772,8 @@ def upgrade():
 ###################
 ### Menu Screen ###
 ###################
+global menu
+menu = True
 wn.bgpic("menu.gif")
 winsound.PlaySound("menu_theme", winsound.SND_LOOP + winsound.SND_ASYNC)
 tutorialmode = False
@@ -797,6 +800,19 @@ def menutaco_up():
     while menu_ycor >= 100:
       menutaco.setposition(0, menutaco.ycor()-0.1)
       menu_ycor -= 0.1
+
+# taco bobbing
+taco_ycor = 100.0
+def taco_up():
+  global taco_ycor
+  while game_start == True or tutorialmode == True:
+    while taco_ycor <= 110:
+      taco.setposition(-190, taco.ycor()+0.1)
+      taco_ycor += 0.1
+    while taco_ycor >= 100:
+      taco.setposition(-190, taco.ycor()-0.1)
+      taco_ycor -= 0.1
+
 
 # Start button
 start_button = trtl.Turtle()
@@ -826,6 +842,9 @@ arrow.shape("arrow.gif")
 # start game function
 def start_game(x, y):
   global game_start
+  global menu
+  global tutorialmode
+  
   winsound.PlaySound("gamemusic.wav", winsound.SND_LOOP + winsound.SND_ASYNC)
   # screen setup
   help.hideturtle()
@@ -839,6 +858,9 @@ def start_game(x, y):
   score_writer.write(str(score) + " tacos", font = font_setup)
   next.write("Next upgrade: " + str(upgrade_cost) + " tacos",font = ("Arial", "7", "italic"))
   rate.write("tacos per click: " + str(score_rate))
+  tutorialmode = False
+  menu = False
+
 
   # sprite setup
   tabasco.showturtle()
@@ -848,6 +870,8 @@ def start_game(x, y):
   soy_sauce.showturtle()
   button.showturtle()
   back_button.showturtle()
+  wn.ontimer(taco_up, 1000)
+
 
   if replay != True:
     wn.ontimer(countdown, rand.randint(30000,120000))
